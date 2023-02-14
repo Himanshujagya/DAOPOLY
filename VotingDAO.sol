@@ -21,13 +21,15 @@ contract DAO {
         admin = msg.sender;
         memberCount = 0;
     }
-
+    
+    // this function is for applying to join the DAO
     function applyForMembership() public {
         require(!members[msg.sender], "You are already a member.");
         members[msg.sender] = true;
         memberCount++;
     }
 
+    // this function is for Admin where he/she can approve membership
     function approveMembership(address newMember) public {
         require(msg.sender == admin, "Only the admin can approve new members.");
         require(!members[newMember], "This address is already a member.");
@@ -35,6 +37,7 @@ contract DAO {
         memberCount++;
     }
 
+    // this function is where anyone can create a proposal
     function createProposal(string memory description, uint duration) public {
         require(members[msg.sender], "You must be a member to create a proposal.");
         Proposal storage newProposal = proposals.push();
@@ -46,6 +49,8 @@ contract DAO {
         newProposal.status = "Open";
     }
 
+
+    //this fucntion is used for voting by the people 
     function vote(uint proposalIndex, bool support) public {
         require(members[msg.sender], "You must be a member to vote.");
         Proposal storage proposal = proposals[proposalIndex];
@@ -63,6 +68,8 @@ contract DAO {
         }
     }
 
+
+    // this function is for admin to close the voting and declare the result
     function closeVoting(uint index) public {
         require(msg.sender == admin, "Only the admin can close the voting process.");
         require(block.timestamp >= proposals[index].duration, "Voting is still open.");
